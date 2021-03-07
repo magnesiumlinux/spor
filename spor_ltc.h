@@ -8,5 +8,9 @@
 
 #include <tomcrypt.h>
 
+struct asymkey {
+    ecc_key key;
+};
+
 
 #endif

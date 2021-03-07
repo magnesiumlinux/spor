@@ -9,15 +9,12 @@
 #include <tomcrypt.h>
 
 #include "spor.h"
+#include "spor_ltc.h"
 #include "util.h"
 
 
 #define DIET(err, msg) fprintf(stderr, "died in %s: %s\n", msg, error_to_string(err)),exit(2)
 
-
-struct asymkey {
-    ecc_key key;
-};
 
 struct s0_profile {
   int prng_ok;
