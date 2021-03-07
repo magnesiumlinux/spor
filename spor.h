@@ -1,21 +1,21 @@
-/* 
- * spor.h 
+/*
+ * spor.h
  */
 
 #ifndef SPOR_H
 #define SPOR_H
 
-#define CRYPTO "ltc_argon"
+#define BACKEND ltc_argon
 
 
-#if BACKEND == "ltc_argon"
+//#if BACKEND == ltc_argon
 /* use this math library */
-#define MATH            gmp_desc
+#define MATH            tfm_desc
 
 /* entropy minimums */
 #define ENTROPY_SOURCE  "/dev/urandom"
 #define MIN_ENTROPY     16
-#define SALTSZ          16    
+#define SALTSZ          16
 
 /* algorithm selection */
 #define PRNG            fortuna_desc
@@ -36,7 +36,7 @@
 
 struct asymkey;
 
-#endif
+//#endif
 
 
 /* miscellany */
@@ -77,7 +77,7 @@ void s0_sign_stream(
 
 void s0_verify_stream(
   struct asymkey *akey, 
-  const int infd, 
+  const int infd,
   const int sigfd
 );
 

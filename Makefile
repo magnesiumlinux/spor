@@ -1,6 +1,6 @@
 
 
-LIBS=-ltomcrypt -ltfm -lgmp -largon2
+LIBS=-ltomcrypt -ltfm -largon2 -lpthread
 CFLAGS=-DTFM_DESC -DGMP_DESC -Wno-cpp -O2
 CC=gcc -Wall
 
