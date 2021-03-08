@@ -96,69 +96,70 @@ memory.
 
 Generate a keypair, and sign a file with the new key:
 
- * 'k' causes an new asymmetic key pair to be generated and held in 
-memory.
- * 'b3x' exports the public key to file descriptor 3
+ * 'k' creates a new asymmetic key pair and stores it in memory.
+ * 'b3x' exports the public key to output descriptor 3
  * 'PP' prompts for (the same) passphrase twice, directly on the active 
 TTY, and stores it to memory
  * 'vx' encrypts the private key with the stored passphrase and 
-exports it to the (default) output file descriptor 1.
- * '4g' reads 'file' from the (default) input file descriptor 0 and 
-writes the signature to file descriptor 4.
+exports it to the (default) output descriptor 1.
+ * '4g' reads 'file' from the (default) input descriptor 0 and 
+writes the signature to active descriptor 4.
 
 
 #### spor 'Pvm 3i 4f' <privatekey 3<file 4<file.sig
 
 Sign a file with an existing private key:
 
- * 'Pvm' prompts for a passphrase on the TTY, and imports a priVate key 
-on descriptor 1.  Note that we define what kind of key we're 
-manipulating with 'v' or 'b' before we specify the action with 'm' or 
-'x' -- 'mv' will not do what you expect!
+ * 'Pvm' prompts for a passphrase on the TTY, and imports a private key 
+on (default) output descriptor 1. 
 
- * '3i' sets the active input descriptor to 3
+ * '3i' sets the input descriptor to 3
 
- * '4f' veriFies the data read from the active input descriptor with the 
-signature read from descriptor 4.  Signature verification is the only 
-action in spor where we need to read two separate pieces of information; 
-you *must* specify the descriptor to read the signature from -- 
-otherwise you'll be trying to verify data using itself as the signature!
+ * '4f' verifies the data read from the input descriptor with the 
+signature read from active descriptor 4.
 
 
 #### spor 'Pvm PPvx' <privatekey >privatekey.newpassphrase
 
 Change the passphrase on a private key:
 
- * 'Pvm' prompts for a Passphrase on the TTY, and iMports a priVate key 
-read from (default) descriptor 0
+ * 'Pvm' prompts for a passphrase on the TTY, and imports a priVate key 
+read from (default) input descriptor 0
  * 'PPvx' prompts for (and confirms) another Passphrase on the TTY and 
-eXports the priVate key to (default) descriptor 1
+exports the private key to (default) output descriptor 1
 
 
 ####  cat pwdfile | spor 'p 3i 4o e' 3<clear 4>cipher
 
 Encrypt a file with a passphrase read from a file
- * 'p' reads a passphrase from (default) descriptor 0
+ * 'p' reads a passphrase from (default) input descriptor 0
  * '3i' sets the input descriptor for the next command to 3
  * '4o' sets the output descriptor for the next command to 4
- * 'e' applies symmetric encryption, and writes the the output 
-descriptor
+ * 'e' applies symmetric encryption, reading from the input 
+descriptor and writing to the outputdescriptor
 
 
 ## stream format
 
 The stream format is described in this comment in spor.c:
 
+```
 /***
  *** header format is:
  ***  bytes 0,1: magic number "s0"
  ***      2,3,4: format version 0
- ***          5: packet type: V=private key,B=public key,S=symmetric message,G=signature,A=asymmetric message
+ ***          5: packet type: V=private key,B=public key,S=symmetric message,
+                 G=signature,A=asymmetric message
  *** followed by zero or more headers of the format:
  ***          n: header type: I=IV,L=salt,K=encrypted message key
  ***        n+1: header data length
- *** n+2,n+2+sz: header data
+ *** n,n+1...sz: header data
  ***/
+```
+
+followed by the raw data stream. 
+
+(more to come)
 
 
 ## bugs/todo/open questions
@@ -166,6 +167,9 @@ The stream format is described in this comment in spor.c:
  * the private key is never explicitly zeroed in memory?
 
  * implement hashing!
+
+ * are the on-disk formats actually compatible across multiple 
+architectures and operating systems?
 
  * multiple-digit file descriptors should be straightforward to 
 implement, but the use cases aren't compelling for the added complexity?
@@ -181,3 +185,4 @@ memory zeroing) is not run in those cases
 code.  should we/can we do this ourselves?
 
  * is there value in implementing an authenticated encryption mode?
+
