@@ -81,6 +81,10 @@ void s0_verify_stream(
   const int sigfd
 );
 
+void s0_asym_setup(
+  struct asymkey *akey
+);
+
 void s0_asym_encrypt_stream(
   struct asymkey *akey, 
   const int infd, 

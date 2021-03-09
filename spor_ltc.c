@@ -150,11 +150,16 @@ unsigned s0_hash_size(void) {
  ** PK primitives
  **/
 
+void s0_asym_setup(struct asymkey *akeyp) {
+  akeyp->ready = 0;
+}
 
 void s0_asym_keygen(struct asymkey *akeyp) {
   int err;
   s0_prng_init();
-  if ( (err=ecc_make_key(&prof.prng, prof.prng_idx, KEYSZ_PK, &akeyp->key)) != CRYPT_OK) DIET(err,"ecc_make_key");
+  if ( (err=ecc_make_key(&prof.prng, prof.prng_idx, KEYSZ_PK, &akeyp->key))
+        != CRYPT_OK) DIET(err,"ecc_make_key");
+  akeyp->ready = 1;
 }
 
 void s0_asym_import (const unsigned const char *buf, unsigned len, 
@@ -162,11 +167,13 @@ void s0_asym_import (const unsigned const char *buf, unsigned len,
   int err;
   if ( (err=ecc_import(buf, len, &akeyp->key)) != CRYPT_OK)
     DIET(err, "ecc_import (bad passphrase?)");
+  akeyp->ready = 1;
 }
 
 void s0_asym_export (unsigned char *buf, long unsigned *szp, 
                      const unsigned export_private, struct asymkey *akeyp) {
   int err, type;
+  if ( ! akeyp->ready ) DIE("no key loaded");
   type = (export_private) ? PK_PRIVATE : PK_PUBLIC;
   if ( (err=ecc_export(buf, szp, type, &akeyp->key)) != CRYPT_OK) {
     DIET(err,"ecc_export(private)");
@@ -177,6 +184,7 @@ void s0_asym_export (unsigned char *buf, long unsigned *szp,
 void s0_asym_sign(struct asymkey *akeyp, const unsigned char *hash, const int hashsz, 
                   unsigned char *sig, long unsigned *sigszp) {
   int err;
+  if ( ! akeyp->ready ) DIE("no key loaded");
   s0_prng_init();
   if ( (err=ecc_sign_hash(
          hash, hashsz, sig, sigszp, 
@@ -188,6 +196,7 @@ int s0_asym_verify(struct asymkey *akeyp, const unsigned char *hash, const int h
                    const unsigned char *sig, const const unsigned sigsz) {
   int err;
   int stat;
+  if ( ! akeyp->ready ) DIE("no key loaded");
   if ( (err=ecc_verify_hash(sig, sigsz, hash, hashsz,
          &stat, &akeyp->key)
        ) != CRYPT_OK ) DIET(err, "ecc_verify_hash");
@@ -198,6 +207,7 @@ void s0_asym_encrypt_key(struct asymkey *akeyp,
                          const unsigned char *skey, const unsigned ssz, 
                          unsigned char *cryptbuf, unsigned long *cryptszp) {
   int err;
+  if ( ! akeyp->ready ) DIE("no key loaded");
   s0_prng_init();
   assert (ssz >0);
   if ( (err=ecc_encrypt_key(skey, ssz, cryptbuf, cryptszp, 
@@ -208,6 +218,7 @@ void s0_asym_decrypt_key(struct asymkey *akeyp,
                          unsigned char *skey, unsigned long ssz, 
                          const unsigned char *cryptbuf, const unsigned long cryptsz) {
   int err;
+  if ( ! akeyp->ready ) DIE("no key loaded");
   if ( (err=ecc_decrypt_key(cryptbuf, cryptsz, skey, &ssz, &akeyp->key)) != CRYPT_OK ) {
     DIET(err, "ecc_decrypt_key");
   }

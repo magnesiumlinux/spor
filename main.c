@@ -23,7 +23,7 @@
 #define USAGE() \
 fprintf(stderr, "Usage: " EXE " cmdstring\n"\
   "    [0,1,3-9]: set active file descriptor\n"\
-  "    P,p: read password from (the terminal,active descriptor) and generate symmetric key\n"\
+  "    P,p: read password from (the terminal,input descriptor) and generate symmetric key\n"\
   "    i,o: set (input, output) to active file descriptor\n"\
   "    e,d: symmetric (encrypt,decrypt) input to output\n"\
   "    E,D: asymmetric (encrypt,decrypt) input to output\n"\
@@ -44,6 +44,7 @@ fprintf(stderr, "Usage: " EXE " cmdstring\n"\
 
 /* global password buffers */
 unsigned char pwbuf[BUFSZ], pwbuf2[BUFSZ];
+struct asymkey akey;
 
 
 void cleanup_atexit(void) {
@@ -56,6 +57,7 @@ void cleanup_atexit(void) {
   s0_teardown();
   zeromem(pwbuf, sizeof(pwbuf));
   zeromem(pwbuf2, sizeof(pwbuf2));
+  zeromem(&akey, sizeof(akey));
   burn_stack(1024*4);
 }
 
@@ -75,15 +77,15 @@ int main(int argc, char **argv) {
   unsigned char *pwptr = NULL;
   char *pwprompt = PWPROMPT;
   unsigned pwsz = 0, pwsz2 = 0;
-  
-  struct asymkey akey;
+
 
   if (argc != 2 ) USAGE();
   cmd = argv[1];
 
   s0_setup();
+  s0_asym_setup(&akey);
   atexit(cleanup_atexit);
-  
+
   for (int i=0; cmd[i]; i++) {
     switch ( cmd[i] ) {
     case ' ':              /* ignored for input readability */

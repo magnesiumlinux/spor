@@ -9,6 +9,7 @@
 #include <tomcrypt.h>
 
 struct asymkey {
+    unsigned char ready;
     ecc_key key;
 };
 

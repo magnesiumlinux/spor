@@ -164,8 +164,6 @@ followed by the raw data stream.
 
 ## bugs/todo/open questions
 
- * the private key is never explicitly zeroed in memory?
-
  * implement hashing!
 
  * are the on-disk formats actually compatible across multiple 
