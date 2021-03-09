@@ -22,12 +22,12 @@
 #define CIPHER          aes_desc
 #define HASH            sha256_desc
 
-#define ARGON_TCOST     10    
+#define ARGON_TCOST     10
 #define ARGON_MCOST     1<<18  /* (=256M) */
-#define ARGON_PARALLEL  4 
+#define ARGON_PARALLEL  4
 
 /* must match algorithm block sizes above */
-#define KEYSZ_SYM       32     /* 256 bits */    
+#define KEYSZ_SYM       32     /* 256 bits */
 #define KEYSZ_PK        65     /* 521 bits */
 
 /* on-disk format */
@@ -51,32 +51,32 @@ struct asymkey;
  **/
 
 void s0_encrypt_stream (
-  const int infd,  
-  const int outfd, 
-  unsigned char *pwbuf, 
+  const int infd,
+  const int outfd,
+  unsigned char *pwbuf,
   const unsigned len
 );
 void s0_decrypt_stream(
-  const int infd, 
-  const int outfd, 
-  unsigned char *pwbuf, 
+  const int infd,
+  const int outfd,
+  unsigned char *pwbuf,
   const unsigned len
 );
 
 void s0_hash_stream(
-  const int infd, 
-  unsigned char *hash, 
+  const int infd,
+  unsigned char *hash,
   unsigned sz
 );
 
 void s0_sign_stream(
-  struct asymkey *akey, 
-  const int infd, 
+  struct asymkey *akey,
+  const int infd,
   const int sigfd
 );
 
 void s0_verify_stream(
-  struct asymkey *akey, 
+  struct asymkey *akey,
   const int infd,
   const int sigfd
 );
@@ -86,14 +86,14 @@ void s0_asym_setup(
 );
 
 void s0_asym_encrypt_stream(
-  struct asymkey *akey, 
-  const int infd, 
+  struct asymkey *akey,
+  const int infd,
   const int outfd
 );
 
 void s0_asym_decrypt_stream(
-  struct asymkey *akey, 
-  const int infd, 
+  struct asymkey *akey,
+  const int infd,
   const int outfd
 );
 
@@ -101,15 +101,15 @@ void s0_create_key(
   struct asymkey *akeyp
 );
 void s0_import_key(
-  struct asymkey *akeyp, 
-  const int infd, 
-  unsigned char *pwbuf, 
+  struct asymkey *akeyp,
+  const int infd,
+  unsigned char *pwbuf,
   const unsigned len
 );
 void s0_export_key(
-  struct asymkey *akeyp, 
-  const int outfd, 
-  unsigned char *pwbuf,  
+  struct asymkey *akeyp,
+  const int outfd,
+  unsigned char *pwbuf,
   const unsigned len
 );
 
@@ -122,33 +122,33 @@ void s0_teardown(void);
 
 void s0_prng_init(void);
 void s0_prng_getbytes (
-  unsigned char *buf, 
+  unsigned char *buf,
   const int buflen
 );
 void s0_prng_done(void);
 
 void s0_cipher_init(
-  const unsigned char *key, 
-  const unsigned char *iv, 
+  const unsigned char *key,
+  const unsigned char *iv,
   const int sz
 );
 void s0_cipher_encrypt(
-  unsigned char *buf, 
+  unsigned char *buf,
   const unsigned sz
 );
 void s0_cipher_decrypt(
-  unsigned char *buf, 
+  unsigned char *buf,
   const unsigned sz
 );
 void s0_cipher_done(void);
 
 void s0_hash_init(void);
 void s0_hash_update(
-  const unsigned char *buf, 
+  const unsigned char *buf,
   const unsigned sz
 );
 void s0_hash_done(
-  unsigned char *buf, 
+  unsigned char *buf,
   const unsigned sz
 );
 unsigned s0_hash_size(void);
@@ -157,44 +157,44 @@ void s0_asym_keygen(
   struct asymkey *akeyp
 );
 void s0_asym_import(
-  const unsigned char *buf, 
-  const unsigned len, 
+  const unsigned char *buf,
+  const unsigned len,
   struct asymkey *akeyp
 );
 void s0_asym_export(
-  unsigned char *buf, 
-  long unsigned *szp, 
-  const unsigned type, 
+  unsigned char *buf,
+  long unsigned *szp,
+  const unsigned type,
   struct asymkey *akeyp
 );
 
 void s0_asym_sign(
-  struct asymkey *akeyp, 
-  const unsigned char *hash, 
-  const int hashsz, 
-  unsigned char *sig, 
+  struct asymkey *akeyp,
+  const unsigned char *hash,
+  const int hashsz,
+  unsigned char *sig,
   long unsigned *sigszp
 );
 int s0_asym_verify(
-  struct asymkey *akeyp, 
-  const unsigned char *hash, 
-  const int hashsz, 
-  const unsigned char *sig, 
+  struct asymkey *akeyp,
+  const unsigned char *hash,
+  const int hashsz,
+  const unsigned char *sig,
   const unsigned sigsz
 );
 
 void s0_asym_encrypt_key(
-  struct asymkey *akeyp, 
-  const unsigned char *skey, 
-  const unsigned ssz, 
-  unsigned char *cryptbuf, 
+  struct asymkey *akeyp,
+  const unsigned char *skey,
+  const unsigned ssz,
+  unsigned char *cryptbuf,
   unsigned long *cryptszp
 );
 void s0_asym_decrypt_key(
-  struct asymkey *akeyp, 
-  unsigned char *skey,  
-  unsigned long ssz, 
-  const unsigned char *cryptbuf, 
+  struct asymkey *akeyp,
+  unsigned char *skey,
+  unsigned long ssz,
+  const unsigned char *cryptbuf,
   const unsigned long cryptsz
 );
 

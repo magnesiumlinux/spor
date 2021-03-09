@@ -53,7 +53,7 @@ unsigned s0_read_header(int infd, unsigned char type, unsigned char *buf, unsign
   if ( hdr[0] != type ) DIEC("bad header type", hdr[0]);
   if ( sz < hdr[1] ) DIEC2("buffer overflow", sz, hdr[1]);
   len = read_or_die(infd, buf, hdr[1], "reading header data");
-  if ( len < hdr[1] ) DIE("short read in header data");   
+  if ( len < hdr[1] ) DIE("short read in header data");
   return len;
 }
 
@@ -63,18 +63,18 @@ void s0_write_header(int outfd, unsigned char type, unsigned char *buf, unsigned
   hdr[1] = len;
   if ( write_or_die(outfd, hdr, 2, "writing header") < 2 ) DIE("short write in header");
   len = write_or_die(outfd, buf, len, "writing header data");
-  if ( len != hdr[1] ) DIE("short write in header data");  
+  if ( len != hdr[1] ) DIE("short write in header data");
 }
 
 /**
  ** Asymmetric key management
- **/ 
+ **/
 
 void s0_create_key(struct asymkey *akeyp) {
   s0_asym_keygen(akeyp);
 }
 
-void s0_import_key(struct asymkey* akeyp, const int infd, 
+void s0_import_key(struct asymkey* akeyp, const int infd,
                    unsigned char *pwbuf, const unsigned pwsz) {
   /* public/private are mixed because our caller doesn't know */
   unsigned char skey[KEYSZ_SYM];
@@ -102,23 +102,23 @@ void s0_import_key(struct asymkey* akeyp, const int infd,
     s0_read_magic(infd, 'B');
     len = read_or_die(infd, buf, sizeof(buf), "reading key");
     s0_asym_import(buf, len, akeyp);
-  }   
+  }
 }
 
-void s0_export_key(struct asymkey *akeyp, const int outfd, 
+void s0_export_key(struct asymkey *akeyp, const int outfd,
                    unsigned char *pwbuf, const unsigned pwsz) {
   /* public/private are mixed because our caller doesn't know */
   unsigned char skey[KEYSZ_SYM];
   unsigned char iv[KEYSZ_SYM], salt[SALTSZ];
   unsigned char buf[BUFSZ];
   unsigned long sz = sizeof(buf);
- 
+
   if ( pwbuf ) {
     if ( ! pwsz ) DIE("no passphrase");
 
     s0_prng_getbytes(iv, sizeof(iv));
     s0_prng_getbytes(salt, sizeof(salt));
-   
+
     s0_write_magic(outfd, 'V');
     s0_write_header(outfd, 'I', iv, sizeof(iv));
     s0_write_header(outfd, 'L', salt, sizeof(salt));
@@ -144,7 +144,7 @@ void s0_export_key(struct asymkey *akeyp, const int outfd,
  * stream interfaces
  */
 
-void s0_filter_stream(const int infd, const int outfd, 
+void s0_filter_stream(const int infd, const int outfd,
                       void (filter)(unsigned char *, unsigned)) {
   unsigned char buf[BUFSZ];
   unsigned len;
@@ -167,9 +167,9 @@ void s0_hash_stream(const int infd, unsigned char *hash, unsigned sz) {
 
 
 
-void s0_encrypt_stream (const int infd, const int outfd, 
+void s0_encrypt_stream (const int infd, const int outfd,
                         unsigned char *pwbuf, const unsigned pwsz) {
-  /* read plaintext, write a header and ciphertext 
+  /* read plaintext, write a header and ciphertext
    */
   unsigned char skey[KEYSZ_SYM];
   unsigned char iv[sizeof(skey)];
@@ -189,12 +189,12 @@ void s0_encrypt_stream (const int infd, const int outfd,
   s0_filter_stream(infd, outfd, s0_cipher_encrypt);
   s0_cipher_done();
 
-  zeromem(skey, sizeof(skey)); 
+  zeromem(skey, sizeof(skey));
 }
 
-void s0_decrypt_stream(const int infd, const int outfd, 
+void s0_decrypt_stream(const int infd, const int outfd,
                        unsigned char *pwbuf, const unsigned pwsz) {
-  /* read header and ciphertext, write plaintext 
+  /* read header and ciphertext, write plaintext
    */
   unsigned char skey[KEYSZ_SYM];
   unsigned char iv[sizeof(skey)], salt[SALTSZ];
@@ -212,7 +212,7 @@ void s0_decrypt_stream(const int infd, const int outfd,
   s0_cipher_done();
 
   zeromem(skey, sizeof(skey));
-} 
+}
 
 
 void s0_sign_stream(struct asymkey *akeyp, const int infd, const int sigfd) {
@@ -252,7 +252,7 @@ void s0_asym_encrypt_stream(struct asymkey *akeyp, const int infd, const int out
   s0_write_magic(outfd, 'A');
   s0_write_header(outfd, 'I', iv, sizeof(iv));
   s0_write_header(outfd, 'K', skey_crypt, cryptlen);
-  
+
   s0_cipher_init(skey, iv, sizeof(skey));
   s0_filter_stream(infd, outfd, s0_cipher_encrypt);
   s0_cipher_done();

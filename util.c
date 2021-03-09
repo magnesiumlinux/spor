@@ -50,7 +50,7 @@ int read_or_die(int fd, unsigned char *buf, unsigned sz, char *msg) {
 
 int write_or_die (int fd, unsigned char *buf, unsigned sz, char *msg) {
   int len;
-  if ( (len=write(fd, buf, sz)) < 0 ) DIES(msg); 
+  if ( (len=write(fd, buf, sz)) < 0 ) DIES(msg);
   return len;
 }
 
@@ -59,7 +59,7 @@ int write_or_die (int fd, unsigned char *buf, unsigned sz, char *msg) {
  **  burn_stack and zeromem, from libtomcrypt by Tom St Denis
  **/
 
-/* 
+/*
    Burn some stack memory
    @param len amount of stack to burn in bytes
 */

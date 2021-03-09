@@ -48,7 +48,7 @@ struct asymkey akey;
 
 
 void cleanup_atexit(void) {
-  /* overwrite our stack memory with zeros 
+  /* overwrite our stack memory with zeros
    * size to burn is discovered experimentally
    * with stack_test.sh: increase the value until
    * the minimum stack size jumps
@@ -89,10 +89,10 @@ int main(int argc, char **argv) {
   for (int i=0; cmd[i]; i++) {
     switch ( cmd[i] ) {
     case ' ':              /* ignored for input readability */
-      break; 
+      break;
 
     case 'p':              /* get passphrase from a file descriptor */
-      pwsz = read_or_die(NEXTIN(), pwbuf, sizeof(pwbuf), "reading passphrase"); 
+      pwsz = read_or_die(NEXTIN(), pwbuf, sizeof(pwbuf), "reading passphrase");
       CLOSEIN();
       break;
     case 'P':              /* get a passphrase from the terminal */
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
 
       if ( pwsz2 ) {
         if ( pwsz != pwsz2 ) DIE("password mismatch");
-        if ( memcmp(pwbuf, pwbuf2, pwsz) ) DIE("password mismatch"); 
+        if ( memcmp(pwbuf, pwbuf2, pwsz) ) DIE("password mismatch");
       }
       zeromem(pwbuf2, pwsz2);
       break;
@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
         break;
     case 'o':              /*(re)set active output descriptor */
 	outfd=NEXTOUT();
-        break; 
+        break;
 
     case 'e':              /* encrypt */
       s0_encrypt_stream(infd, outfd, pwbuf, pwsz);
@@ -201,7 +201,7 @@ int main(int argc, char **argv) {
       fprintf(stderr, "bad cmd: %c\n", cmd[i]);
       USAGE();
     }
-  }  
+  }
 
   exit(0);
 }
